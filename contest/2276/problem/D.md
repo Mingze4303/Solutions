@@ -78,19 +78,12 @@ Many
 
 2.遍历deg[i]，若deg[i] == 0 → BrainMelt
 
-3.BFS统计图中连通块数量，并判断每张连通图是否为二分图
-
-4.各连通块的方案数相乘，任何≥2个点的连通块至少都有2种合法染色。因此连通块数 ≥ 2 → Many。
-
-5.注意：当连通块个数恰好为1时，还不能一概而论。当且仅当这个联通块为“星形图”时，联通二分图只有两种方案数。
-
-也就是说，有一个顶点的度数为n-1，它链接了其他所有点，而其他点的度数均为一。
+3.当且仅当这个联通块为“星形图”时，联通二分图只有两种方案数。也就是说，有一个顶点的度数为n-1，它链接了其他所有点，而其他点的度数均为一。
 
 AC码：
 ```cpp
 #include <iostream>
 #include <vector>
-#include <queue>
 
 using namespace std;
 
@@ -100,6 +93,7 @@ void solve()
 	cin >> n >> m;
 	vector <vector <int>> edge(n + 1);
 	vector <int> deg(n + 1);
+	int nmax = 0;
 	for (int i = 0; i < m; i++)
 	{
 		int u, v;
@@ -108,6 +102,7 @@ void solve()
 		deg[v]++;
 		edge[u].push_back(v);
 		edge[v].push_back(u);
+		namx = max(namx ,deg[u] ,deg[v]);
 	}
 
 	for (int i = 1; i <= n; i++)
@@ -119,48 +114,7 @@ void solve()
 		}
 	}
 
-	vector <int> col(n + 1, -1);
-	int com = 0;
-	bool b = 1;
-	for (int i = 1; i <= n; i++)
-	{
-		if (col[i] == -1)
-		{
-			com++;
-			queue <int> q;
-			q.push(i);
-			col[i] = 0;
-			while (!q.empty())
-			{
-				int u = q.front();
-				q.pop();
-				for (int v : edge[u])
-				{
-					if (col[v] == -1)
-					{
-						col[v] = 1 - col[u];
-						q.push(v);
-					}
-
-					else if(col[v] == col[u])
-					{
-						b = 0;
-					}
-				}
-			}
-		}
-	}
-
-	int mx = 0;
-	for (int i = 1; i <= n; i++)
-	{
-		if (deg[i] > mx)
-		{
-			mx = deg[i];
-		}
-	}
-
-	if (com == 1 && b && m == n - 1 && mx == n - 1)
+	if (m == n-1 && namx == n-1)
 	{
 		cout << 2 << endl;
 		return;
